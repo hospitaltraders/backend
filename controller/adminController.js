@@ -36,8 +36,8 @@ import wishlistModel from "../models/wishlistModel.js";
 import compareModel from "../models/compareModel.js";
 import enquireModel from "../models/enquireModel.js";
 import specializationModel from "../models/specializationModel.js";
-import interestedModel from "../models/InterestedModel.js";
-import departmentsModel from "../models/DepartmentsModel.js";
+import interestedModel from "../models/interestedModel.js";
+import departmentsModel from "../models/departmentsModel.js";
 import businessModel from "../models/businessModel.js";
 
 const storage = multer.diskStorage({
