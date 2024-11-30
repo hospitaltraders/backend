@@ -2239,7 +2239,6 @@ export const updateHospitalProfileUser = async (req, res) => {
       Designation,
       departmentsAvailable,
       interestedServices,
-      AccreditationCertificateFile,
       typeHospital,
       profile_url: myslug,
     };
