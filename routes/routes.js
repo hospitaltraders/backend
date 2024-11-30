@@ -370,9 +370,10 @@ function checkOrigin(req, res, next) {
   const allowedOrigins = [
     "http://localhost:3000",
     "http://localhost:3001",
-    "https://www.travelleads.in",
-    "https://agents.travelleads.in",
-    "https://www.agents.travelleads.in",
+    "https://hospital.airblissservices.com",
+    "https://hospitaladmin.airblissservices.com",
+    "https://www.hospitaladmin.airblissservices.com",
+    "https://www.hospital.airblissservices.com",
   ]; // Add your authorized domains here
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
@@ -386,7 +387,6 @@ function checkOrigin(req, res, next) {
     // Check if no token or token doesn't match
     if (!token || token !== secretKey) {
       res.status(403).json({ error: "Unauthorized domain" });
-      next();
     } else {
       next();
     }
