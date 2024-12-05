@@ -156,6 +156,9 @@ const userSchema = mongoose.Schema(
       type: String,
       default: "",
     },
+    OfferEquipment: {
+      type: String,
+    },
 
     Designation: {
       type: String,

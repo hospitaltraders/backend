@@ -147,6 +147,7 @@ export const SignupUserType = async (req, res) => {
       Gender,
       DOB,
       address,
+      city,
     } = req.body;
 
     // const {
@@ -177,12 +178,13 @@ export const SignupUserType = async (req, res) => {
       email,
       password: hashedPassword,
       pincode,
-      Gender,
+      gender: Gender,
       DOB,
       address,
       state,
       statename,
       country,
+      city,
       // profile: profile ? profile[0].path : "",
       // AadhaarFront: AadhaarFront ? AadhaarFront[0].path : "",
       // AadhaarBack: AadhaarBack ? AadhaarBack[0].path : "",
@@ -1583,9 +1585,20 @@ export const EmailVerify = async (req, res) => {
 };
 
 export const HomeSendEnquire = async (req, res) => {
-  const { fullname, email, phone, service, QTY, userId, userEmail } = req.body;
-
+  const {
+    fullname,
+    email,
+    phone,
+    service,
+    QTY,
+    userId,
+    userEmail,
+    type,
+    Requirement,
+    name,
+  } = req.body;
   console.log(userId, userEmail);
+
   try {
     // Save data to the database
     const newEnquire = new enquireModel({
@@ -1594,8 +1607,11 @@ export const HomeSendEnquire = async (req, res) => {
       phone,
       service,
       QTY,
+      Requirement,
       userId,
       userEmail,
+      type,
+      name,
     });
 
     await newEnquire.save();
@@ -1612,10 +1628,15 @@ export const HomeSendEnquire = async (req, res) => {
       },
     });
 
+    // Conditional recipient list
+    const recipients = userEmail
+      ? `${userEmail}, ${process.env.MAIL_TO_ADDRESS}`
+      : process.env.MAIL_TO_ADDRESS;
+
     // Email message
     const mailOptions = {
       from: process.env.MAIL_FROM_ADDRESS, // Update with your email address
-      to: userEmail, // Update with your email address
+      to: recipients, // Update with your email address
       subject: "New Enquire Form Submission",
       text: `Name: ${fullname}\nEmail: ${email}\nPhone: ${phone}\nService: ${service}\nQTY:${QTY}`,
     };
@@ -4659,6 +4680,7 @@ export const getAllDoctors = async (req, res) => {
     }
 
     query.type = { $in: 2 }; // Use $in operator to match any of the values in the array
+    query.verified = { $in: 1 }; // Use $in operator to match any of the values in the array
 
     // Add date range filtering to the query
     if (startDate && endDate) {

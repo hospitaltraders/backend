@@ -14,7 +14,16 @@ const enquireSchema = mongoose.Schema(
     qty: {
       type: Number,
     },
+    type: {
+      type: Number,
+    },
+    Requirement: {
+      type: String,
+    },
     service: {
+      type: String,
+    },
+    name: {
       type: String,
     },
     userId: {

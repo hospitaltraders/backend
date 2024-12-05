@@ -2802,6 +2802,7 @@ export const getAllEnquireAdmin = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10; // Number of documents per page, default is 10
     const searchTerm = req.query.search || ""; // Get search term from the query parameters
     const userId = req.query.userId || ""; // Get search term from the query parameters
+    const type = req.query.type || ""; // Get search term from the query parameters
 
     const skip = (page - 1) * limit;
 
@@ -2815,6 +2816,9 @@ export const getAllEnquireAdmin = async (req, res) => {
 
     if (userId.length > 0) {
       query.userId = { $in: userId }; // Use $in operator to match any of the values in the array
+    }
+    if (type.length > 0) {
+      query.type = { $in: type }; // Use $in operator to match any of the values in the array
     }
 
     const totalpage = await enquireModel.countDocuments(query); // Count documents matching the query
