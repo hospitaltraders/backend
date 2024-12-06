@@ -370,12 +370,15 @@ function checkOrigin(req, res, next) {
   const allowedOrigins = [
     "http://localhost:3000",
     "http://localhost:3001",
-    "https://hospitaltraders.com",
-    "https://admin.hospitaltraders.com",
-    "https://www.admin.hospitaltraders.com",
-    "https://www.hospitaltraders.com",
-    "https://www.hospitaltraders.com",
-    "*",
+    // "https://hospitaltraders.com",
+    // "https://admin.hospitaltraders.com",
+    // "https://www.admin.hospitaltraders.com",
+    // "https://www.hospitaltraders.com",
+    // "https://www.hospitaltraders.com",
+    "https://hospital.airblissservices.com",
+    "https://hospitaladmin.airblissservices.com",
+    "https://www.hospitaladmin.airblissservices.com",
+    "https://www.hospital.airblissservices.com",
   ]; // Add your authorized domains here
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
