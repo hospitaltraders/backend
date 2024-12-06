@@ -387,6 +387,7 @@ function checkOrigin(req, res, next) {
     // Check if no token or token doesn't match
     if (!token || token !== secretKey) {
       res.status(403).json({ error: "Unauthorized domain" });
+      next();
     } else {
       next();
     }
