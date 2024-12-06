@@ -374,6 +374,8 @@ function checkOrigin(req, res, next) {
     "https://admin.hospitaltraders.com",
     "https://www.admin.hospitaltraders.com",
     "https://www.hospitaltraders.com",
+    "https://www.hospitaltraders.com",
+    "*",
   ]; // Add your authorized domains here
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
@@ -387,7 +389,6 @@ function checkOrigin(req, res, next) {
     // Check if no token or token doesn't match
     if (!token || token !== secretKey) {
       res.status(403).json({ error: "Unauthorized domain" });
-      next();
     } else {
       next();
     }
