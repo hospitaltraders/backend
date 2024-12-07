@@ -106,6 +106,7 @@ import {
   profileVendorImage,
   updateVendorProfileUser,
   updateDetailsUser,
+  getAdminBlogIdController,
 } from "../controller/adminController.js";
 import {
   AddCart,
@@ -435,6 +436,8 @@ router.put("/update-profile/:id", updateProfileUser);
 router.post("/create-blog", createBlogController);
 router.put("/update-blog/:id", updateBlogController);
 router.get("/get-blog/:id", getBlogIdController);
+router.get("/get-admin-blog/:id", getAdminBlogIdController);
+
 router.delete("/delete-blog/:id", deleteBlogController);
 
 router.post("/create-chat", CreateChatController);

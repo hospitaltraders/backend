@@ -425,6 +425,30 @@ export const AddAdminBlogController = async (req, res) => {
   }
 };
 
+export const getAdminBlogIdController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const blog = await blogModel.findById(id);
+    if (!blog) {
+      return res.status(200).send({
+        message: "Blog Not Found By Id",
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      message: "fetch Single Blog!",
+      success: true,
+      blog,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: `Error while get Blog: ${error}`,
+      success: false,
+      error,
+    });
+  }
+};
+
 export const getAllBlogAdmin = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1; // Current page, default is 1
