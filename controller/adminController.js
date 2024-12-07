@@ -39,7 +39,6 @@ import specializationModel from "../models/specializationModel.js";
 import interestedModel from "../models/interestedModel.js";
 import departmentsModel from "../models/departmentsModel.js";
 import businessModel from "../models/businessModel.js";
-import slugify from "slugify";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -373,6 +372,14 @@ export const deleteGalleryController = async (req, res) => {
 };
 
 export const uploadImage = upload.single("image");
+
+const slugify = (str) => {
+  return str
+    .toLowerCase() // Convert to lowercase
+    .replace(/[^\w\s-]/g, "") // Remove non-alphanumeric characters
+    .replace(/[\s_-]+/g, "-") // Replace spaces and underscores with hyphens
+    .replace(/^-+|-+$/g, ""); // Trim leading/trailing hyphens
+};
 
 export const AddAdminBlogController = async (req, res) => {
   try {
