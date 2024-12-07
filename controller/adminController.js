@@ -39,6 +39,7 @@ import specializationModel from "../models/specializationModel.js";
 import interestedModel from "../models/interestedModel.js";
 import departmentsModel from "../models/departmentsModel.js";
 import businessModel from "../models/businessModel.js";
+import slugify from "slugify";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -380,7 +381,6 @@ export const AddAdminBlogController = async (req, res) => {
       description,
       image,
       metaTitle,
-      slug,
       metaDescription,
       metaKeywords,
     } = req.body;
@@ -391,6 +391,7 @@ export const AddAdminBlogController = async (req, res) => {
         message: "Please Provide All Fields",
       });
     }
+    const slug = slugify(title, { lower: true, strict: true });
 
     const newBlog = new blogModel({
       title,

@@ -509,7 +509,39 @@ export const updateUserController = async (req, res) => {
 
 export const getAllBlogsController = async (req, res) => {
   try {
-    const blogs = await blogModel.find({}).lean();
+    const blogs = await blogModel
+      .find({})
+      .select("title image slug createdAt")
+      .lean();
+    if (!blogs) {
+      return res.status(200).send({
+        message: "NO Blogs Find",
+        success: false,
+      });
+    }
+    return res.status(200).send({
+      message: "All Blogs List ",
+      BlogCount: blogs.length,
+      success: true,
+      blogs,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: `error while getting Blogs ${error}`,
+      success: false,
+      error,
+    });
+  }
+};
+
+export const getAllLatestBlogsController = async (req, res) => {
+  try {
+    const blogs = await blogModel
+      .find({})
+      .select("title image slug createdAt")
+      .sort({ createdAt: -1 }) // Sort by the createdAt field in descending order
+      .limit(4) // Limit to only the last 4 blogs
+      .lean();
     if (!blogs) {
       return res.status(200).send({
         message: "NO Blogs Find",
@@ -599,7 +631,7 @@ export const updateBlogController = async (req, res) => {
 export const getBlogIdController = async (req, res) => {
   try {
     const { id } = req.params;
-    const blog = await blogModel.findById(id);
+    const blog = await blogModel.findOne({ slug: id });
     if (!blog) {
       return res.status(200).send({
         message: "Blog Not Found By Id",

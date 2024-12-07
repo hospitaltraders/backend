@@ -118,6 +118,7 @@ import {
   Userlogin,
   SignupUser,
   getAllBlogsController,
+  getAllLatestBlogsController,
   createBlogController,
   LoginAndVerifyOTP,
   updateBlogController,
@@ -426,6 +427,7 @@ router.get("/get-cart/:id", getCart);
 router.put("/update-cart/:id", UpdateCart);
 
 router.get("/all-blogs", getAllBlogsController);
+router.get("/all-blogs-latest", getAllLatestBlogsController);
 
 router.put("/update-user/:id", updateUserController);
 router.put("/update-profile/:id", updateProfileUser);
