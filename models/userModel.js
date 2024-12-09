@@ -191,6 +191,9 @@ const userSchema = mongoose.Schema(
       type: String,
       default: "",
     },
+    userId: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );

@@ -132,6 +132,14 @@ export const SignupUserImage = upload.fields([
   { name: "AadhaarBack", maxCount: 1 },
 ]);
 
+const slugify = (str) => {
+  return str
+    .toLowerCase() // Convert to lowercase
+    .replace(/[^\w\s-]/g, "") // Remove non-alphanumeric characters
+    .replace(/[\s_-]+/g, "-") // Replace spaces and underscores with hyphens
+    .replace(/^-+|-+$/g, ""); // Trim leading/trailing hyphens
+};
+
 export const SignupUserType = async (req, res) => {
   try {
     const {
@@ -149,6 +157,8 @@ export const SignupUserType = async (req, res) => {
       address,
       city,
     } = req.body;
+
+    const slug = slugify(username, { lower: true, strict: true });
 
     // const {
     //   profile,
@@ -185,6 +195,7 @@ export const SignupUserType = async (req, res) => {
       statename,
       country,
       city,
+      profile_url: slug + "-" + userId,
       // profile: profile ? profile[0].path : "",
       // AadhaarFront: AadhaarFront ? AadhaarFront[0].path : "",
       // AadhaarBack: AadhaarBack ? AadhaarBack[0].path : "",
@@ -4806,6 +4817,7 @@ export const getAllHospital = async (req, res) => {
     }
 
     query.type = { $in: 3 }; // Use $in operator to match any of the values in the array
+    query.verified = { $in: 1 }; // Use $in operator to match any of the values in the array
 
     // Add date range filtering to the query
     if (startDate && endDate) {

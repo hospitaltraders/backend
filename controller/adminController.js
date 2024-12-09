@@ -2168,15 +2168,7 @@ export const updateDoctorProfileUser = async (req, res) => {
       jobLocation,
       specialization,
       linkedInProfile,
-      profile_url,
     } = req.body;
-
-    const myprofile = await userModel.findOne({ profile_url });
-
-    let myslug = profile_url;
-    if (myprofile) {
-      myslug = `${profile_url}-${Math.random().toString(36).substring(7)}`;
-    }
 
     const LicensingFile = req.files ? req.files.LicensingFile : undefined;
     const CertificationsFile = req.files
@@ -2205,7 +2197,6 @@ export const updateDoctorProfileUser = async (req, res) => {
       specialization,
       ExtraCertificationsFile,
       linkedInProfile,
-      profile_url: myslug,
     };
 
     if (LicensingFile && LicensingFile[0]) {
@@ -2236,6 +2227,7 @@ export const updateDoctorProfileUser = async (req, res) => {
 
 export const profileHospitalImage = upload.fields([
   { name: "AccreditationCertificateFile", maxCount: 1 },
+  { name: "ProfileFile", maxCount: 1 },
 ]);
 
 export const updateHospitalProfileUser = async (req, res) => {
@@ -2248,19 +2240,12 @@ export const updateHospitalProfileUser = async (req, res) => {
       departmentsAvailable,
       interestedServices,
       typeHospital,
-      profile_url,
     } = req.body;
-
-    const myprofile = await userModel.findOne({ profile_url });
-
-    let myslug = profile_url;
-    if (myprofile) {
-      myslug = `${profile_url}-${Math.random().toString(36).substring(7)}`;
-    }
 
     const AccreditationCertificateFile = req.files
       ? req.files.AccreditationCertificateFile
       : undefined;
+    const ProfileFile = req.files ? req.files.ProfileFile : undefined;
 
     console.log("req.body", req.body);
 
@@ -2272,12 +2257,15 @@ export const updateHospitalProfileUser = async (req, res) => {
       departmentsAvailable,
       interestedServices,
       typeHospital,
-      profile_url: myslug,
     };
 
     if (AccreditationCertificateFile && AccreditationCertificateFile[0]) {
       updateFields.AccreditationCertificateFile =
         AccreditationCertificateFile[0].path; // Assumes profile[0] is the uploaded file
+    }
+
+    if (ProfileFile && ProfileFile[0]) {
+      updateFields.profile = ProfileFile[0].path; // Assumes profile[0] is the uploaded file
     }
 
     const user = await userModel.findByIdAndUpdate(id, updateFields, {
@@ -2315,15 +2303,7 @@ export const updateVendorProfileUser = async (req, res) => {
       PersonApproved,
       OfferEquipment,
       ServiceArea,
-      profile_url,
     } = req.body;
-
-    const myprofile = await userModel.findOne({ profile_url });
-
-    let myslug = profile_url;
-    if (myprofile) {
-      myslug = `${profile_url}-${Math.random().toString(36).substring(7)}`;
-    }
 
     const ComplianceCertificateFile = req.files
       ? req.files.ComplianceCertificateFile
@@ -2346,7 +2326,6 @@ export const updateVendorProfileUser = async (req, res) => {
       PersonApproved,
       OfferEquipment,
       ServiceArea,
-      profile_url: myslug,
     };
 
     if (ExtraCertificationsFile && ExtraCertificationsFile[0]) {
