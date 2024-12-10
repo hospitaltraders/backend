@@ -2149,6 +2149,7 @@ export const profileDcotorImage = upload.fields([
   { name: "LicensingFile", maxCount: 1 },
   { name: "CertificationsFile", maxCount: 1 },
   { name: "ExtraCertificationsFile", maxCount: 1 },
+  { name: "ProfileFile", maxCount: 1 },
 ]);
 
 export const updateDoctorProfileUser = async (req, res) => {
@@ -2177,6 +2178,8 @@ export const updateDoctorProfileUser = async (req, res) => {
     const ExtraCertificationsFile = req.files
       ? req.files.ExtraCertificationsFile
       : undefined;
+
+    const ProfileFile = req.files ? req.files.ProfileFile : undefined;
 
     console.log("req.body", req.body);
 
@@ -2208,6 +2211,11 @@ export const updateDoctorProfileUser = async (req, res) => {
     if (ExtraCertificationsFile && ExtraCertificationsFile[0]) {
       updateFields.ExtraCertificationsFile = ExtraCertificationsFile[0].path; // Assumes profile[0] is the uploaded file
     }
+
+    if (ProfileFile && ProfileFile[0]) {
+      updateFields.profile = ProfileFile[0].path; // Assumes profile[0] is the uploaded file
+    }
+
     const user = await userModel.findByIdAndUpdate(id, updateFields, {
       new: true,
     });
@@ -2289,6 +2297,7 @@ export const profileVendorImage = upload.fields([
   { name: "ComplianceCertificateFile", maxCount: 1 },
   { name: "TaxDocumentsFile", maxCount: 1 },
   { name: "ExtraCertificationsFile", maxCount: 1 },
+  { name: "ProfileFile", maxCount: 1 },
 ]);
 
 export const updateVendorProfileUser = async (req, res) => {
@@ -2310,6 +2319,7 @@ export const updateVendorProfileUser = async (req, res) => {
       : undefined;
 
     const TaxDocumentsFile = req.files ? req.files.TaxDocumentsFile : undefined;
+    const ProfileFile = req.files ? req.files.ProfileFile : undefined;
 
     const ExtraCertificationsFile = req.files
       ? req.files.ExtraCertificationsFile
@@ -2339,7 +2349,9 @@ export const updateVendorProfileUser = async (req, res) => {
       updateFields.ComplianceCertificateFile =
         ComplianceCertificateFile[0].path; // Assumes profile[0] is the uploaded file
     }
-
+    if (ProfileFile && ProfileFile[0]) {
+      updateFields.profile = ProfileFile[0].path; // Assumes profile[0] is the uploaded file
+    }
     const user = await userModel.findByIdAndUpdate(id, updateFields, {
       new: true,
     });
