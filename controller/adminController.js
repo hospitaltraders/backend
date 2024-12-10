@@ -2369,6 +2369,7 @@ export const updateDetailsUser = async (req, res) => {
       statename,
       city,
       confirm_password,
+      about,
     } = req.body;
 
     let updateFields = {
@@ -2378,6 +2379,7 @@ export const updateDetailsUser = async (req, res) => {
       state,
       statename,
       city,
+      about,
     };
 
     if (password.length > 0 && confirm_password.length > 0) {
