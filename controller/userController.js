@@ -3377,6 +3377,7 @@ export const AuthUserByID = async (req, res) => {
           ComplianceCertificateFile:
             existingUser.ComplianceCertificateFile || "",
           TaxDocumentsFile: existingUser.TaxDocumentsFile || "",
+          about: existingUser.about || "",
         },
       });
       // } else {
