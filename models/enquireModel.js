@@ -23,8 +23,18 @@ const enquireSchema = mongoose.Schema(
     service: {
       type: String,
     },
+    organizationName: {
+      type: String,
+    },
+    designation: {
+      type: String,
+    },
+
     name: {
       type: String,
+    },
+    interested: {
+      type: Array,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,

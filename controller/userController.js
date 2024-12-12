@@ -228,7 +228,7 @@ export const UserloginAll = async (req, res) => {
     }
     const admin = await userModel.findOne({ email });
     if (!admin) {
-      return res.status(200).send({
+      return res.status(401).send({
         success: false,
         message: "email is not registerd",
         admin,
@@ -1639,6 +1639,9 @@ export const HomeSendEnquire = async (req, res) => {
     type,
     Requirement,
     name,
+    organizationName,
+    designation,
+    interested,
   } = req.body;
   console.log(userId, userEmail);
 
@@ -1655,6 +1658,9 @@ export const HomeSendEnquire = async (req, res) => {
       userEmail,
       type,
       name,
+      organizationName,
+      designation,
+      interested,
     });
 
     await newEnquire.save();

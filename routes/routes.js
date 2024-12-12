@@ -81,6 +81,12 @@ import {
   updateSpecializationAdmin,
   deleteSpecializationeAdmin,
   getAllSpecialization,
+  AddAdminSkillController,
+  getAllSkillFillAdmin,
+  updateSkillAdmin,
+  getSkillIdAdmin,
+  deleteSkillAdmin,
+  getAllSkill,
   updateDoctorProfileUser,
   profileDcotorImage,
   profileHospitalImage,
@@ -107,6 +113,7 @@ import {
   updateVendorProfileUser,
   updateDetailsUser,
   getAdminBlogIdController,
+  AddAdminJobController,
 } from "../controller/adminController.js";
 import {
   AddCart,
@@ -236,6 +243,13 @@ router.get("/admin/all-specialization-fillter", getAllSpecializationFillAdmin);
 router.get("/admin/get-specialization/:id", getSpecializationIdAdmin);
 router.put("/admin/update-specialization/:id", updateSpecializationAdmin);
 router.delete("/admin/delete-specialization/:id", deleteSpecializationeAdmin);
+
+router.get("/get-all-skill", getAllSkill);
+router.post("/admin/add-skill", AddAdminSkillController);
+router.get("/admin/all-skill-fillter", getAllSkillFillAdmin);
+router.get("/admin/get-skill/:id", getSkillIdAdmin);
+router.put("/admin/update-skill/:id", updateSkillAdmin);
+router.delete("/admin/delete-skill/:id", deleteSkillAdmin);
 
 router.get("/get-all-department", getAllDepartment);
 router.post("/admin/add-department", AddAdminDepartmentController);
@@ -515,5 +529,7 @@ router.post("/user-login-all", UserloginAll);
 router.get("/all-doctor", getAllDoctors);
 router.get("/all-hospital", getAllHospital);
 router.get("/get-user/:slug", getUserByprofile_url);
+
+router.post("/admin/add-job", AddAdminJobController);
 
 export default router;

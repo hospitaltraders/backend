@@ -39,6 +39,8 @@ import specializationModel from "../models/specializationModel.js";
 import interestedModel from "../models/interestedModel.js";
 import departmentsModel from "../models/departmentsModel.js";
 import businessModel from "../models/businessModel.js";
+import skillModel from "../models/skillModel.js";
+import jobModel from "../models/jobModel.js";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -1597,6 +1599,186 @@ export const getAllSpecialization = async (req, res) => {
   } catch (error) {
     return res.status(500).send({
       message: `error while getting Specialization ${error}`,
+      success: false,
+      error,
+    });
+  }
+};
+
+// for skill
+
+export const AddAdminSkillController = async (req, res) => {
+  try {
+    const { name, status } = req.body;
+
+    // Validation
+    if (!name) {
+      return res.status(400).send({
+        success: false,
+        message: "Please Provide name",
+      });
+    }
+
+    // Create a new category with the specified parent
+    const newSkill = new skillModel({
+      name,
+      status,
+    });
+    await newSkill.save();
+
+    return res.status(201).send({
+      success: true,
+      message: " Skill Created!",
+      newSkill,
+    });
+  } catch (error) {
+    console.error("Error while creating Specialization:", error);
+    return res.status(400).send({
+      success: false,
+      message: "Error while creating Specialization",
+      error,
+    });
+  }
+};
+
+export const getAllSkillFillAdmin = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1; // Current page, default is 1
+    const limit = parseInt(req.query.limit) || 10; // Number of documents per page, default is 10
+    const searchTerm = req.query.search || ""; // Get search term from the query parameters
+
+    const skip = (page - 1) * limit;
+
+    const query = {};
+    if (searchTerm) {
+      // If search term is provided, add it to the query
+      query.$or = [
+        { name: { $regex: searchTerm, $options: "i" } }, // Case-insensitive username search
+        { value: { $regex: searchTerm, $options: "i" } }, // Case-insensitive email search
+      ];
+    }
+
+    const totalSpecialization = await skillModel.countDocuments();
+
+    const Skill = await skillModel
+      .find(query)
+      .sort({ _id: -1 }) // Sort by _id in descending order
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    if (!Skill) {
+      return res.status(200).send({
+        message: "NO Skill found",
+        success: false,
+      });
+    }
+    return res.status(200).send({
+      message: "All Skill list ",
+      SpecializationCount: Skill.length,
+      currentPage: page,
+      totalPages: Math.ceil(totalSpecialization / limit),
+      success: true,
+      Skill,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: `Error while getting Skill ${error}`,
+      success: false,
+      error,
+    });
+  }
+};
+
+export const updateSkillAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { name, status } = req.body;
+
+    let updateFields = {
+      name,
+      status,
+    };
+
+    const Skill = await skillModel.findByIdAndUpdate(id, updateFields, {
+      new: true,
+    });
+
+    return res.status(200).json({
+      message: "Skill Updated!",
+      success: true,
+      Skill,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: `Error while updating Skill: ${error}`,
+      success: false,
+      error,
+    });
+  }
+};
+
+export const getSkillIdAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const Skill = await skillModel.findById(id);
+    if (!Skill) {
+      return res.status(200).send({
+        message: "Skill Not Found By Id",
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      message: "fetch Single Skill!",
+      success: true,
+      Skill,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: `Error while get Skill: ${error}`,
+      success: false,
+      error,
+    });
+  }
+};
+
+export const deleteSkillAdmin = async (req, res) => {
+  try {
+    await skillModel.findByIdAndDelete(req.params.id);
+
+    return res.status(200).send({
+      success: true,
+      message: "Skill Deleted!",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send({
+      success: false,
+      message: "Erorr WHile Deleteing Skill",
+      error,
+    });
+  }
+};
+
+export const getAllSkill = async (req, res) => {
+  try {
+    const Skill = await skillModel.find({ status: 1 }).lean();
+    if (!Skill) {
+      return res.status(200).send({
+        message: "NO Skill Find",
+        success: false,
+      });
+    }
+    return res.status(200).send({
+      message: "All Skill List ",
+      SpecializationCount: Skill.length,
+      success: true,
+      Skill,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: `error while getting Skill ${error}`,
       success: false,
       error,
     });
@@ -4751,6 +4933,86 @@ export const importAllProAdmin = async (req, res) => {
       success: false,
       message: "Error while importing products",
       error: error.message,
+    });
+  }
+};
+
+export const AddAdminJobController = async (req, res) => {
+  try {
+    const {
+      jobtype,
+      jobTitle,
+      jobRole,
+      statename,
+      city,
+      jobOpen,
+      totalExprience,
+      miniExperience,
+      maxExperience,
+      minQualification,
+      gender,
+      englishReq,
+      reLocate,
+      startSalary,
+      endSalary,
+      jobDescription,
+      skill,
+      jobTimings,
+      interviewDetails,
+      c_name,
+      p_name,
+      phone,
+      email,
+      address,
+      userId,
+    } = req.body;
+    //validation
+    if (!userId) {
+      return res.status(400).send({
+        success: false,
+        message: "Please Provide user Id",
+      });
+    }
+    const newJob = new jobModel({
+      jobtype,
+      jobTitle,
+      jobRole,
+      statename,
+      city,
+      jobOpen,
+      totalExprience,
+      miniExperience,
+      maxExperience,
+      minQualification,
+      gender,
+      englishReq,
+      reLocate,
+      startSalary,
+      endSalary,
+      jobDescription,
+      skill,
+      jobTimings,
+      interviewDetails,
+      c_name,
+      p_name,
+      phone,
+      email,
+      address,
+      userId,
+      status: 1,
+    });
+    await newJob.save();
+    return res.status(201).send({
+      success: true,
+      message: "Job Posted!",
+      newJob,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send({
+      success: false,
+      message: "Error WHile Creating Job",
+      error,
     });
   }
 };
