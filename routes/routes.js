@@ -114,6 +114,12 @@ import {
   updateDetailsUser,
   getAdminBlogIdController,
   AddAdminJobController,
+  getAllJobFillAdmin,
+  editStatusJObAdmin,
+  getAllJobDoctorFillAdmin,
+  getJobByIDAdmin,
+  ApplyJobByIDAdmin,
+  getAllMyJobDoctorFillAdmin,
 } from "../controller/adminController.js";
 import {
   AddCart,
@@ -531,5 +537,12 @@ router.get("/all-hospital", getAllHospital);
 router.get("/get-user/:slug", getUserByprofile_url);
 
 router.post("/admin/add-job", AddAdminJobController);
+router.get("/admin/all-job-fillter", getAllJobFillAdmin);
+router.get("/admin/all-job-doctor-fillter", getAllJobDoctorFillAdmin);
+router.get("/admin/all-my-job-doctor-fillter", getAllMyJobDoctorFillAdmin);
+
+router.put("/admin/update-job/:id", editStatusJObAdmin);
+router.get("/admin/get-job-id/:id", getJobByIDAdmin);
+router.get("/admin/apply-job-id/:id/:userId", ApplyJobByIDAdmin);
 
 export default router;

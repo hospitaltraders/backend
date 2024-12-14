@@ -4965,6 +4965,8 @@ export const AddAdminJobController = async (req, res) => {
       email,
       address,
       userId,
+      personProfile,
+      sizeOrganization,
     } = req.body;
     //validation
     if (!userId) {
@@ -4999,6 +5001,8 @@ export const AddAdminJobController = async (req, res) => {
       email,
       address,
       userId,
+      personProfile,
+      sizeOrganization,
       status: 1,
     });
     await newJob.save();
@@ -5012,6 +5016,277 @@ export const AddAdminJobController = async (req, res) => {
     return res.status(400).send({
       success: false,
       message: "Error WHile Creating Job",
+      error,
+    });
+  }
+};
+
+export const getAllJobFillAdmin = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1; // Current page, default is 1
+    const limit = parseInt(req.query.limit) || 10; // Number of documents per page, default is 10
+    const searchTerm = req.query.search || ""; // Get search term from the query parameters
+    const userId = req.query.userId || ""; // Get search term from the query parameters
+
+    const skip = (page - 1) * limit;
+
+    const query = {};
+    if (searchTerm) {
+      const regex = new RegExp(searchTerm, "i"); // Case-insensitive regex pattern for the search term
+
+      // Add regex pattern to search both username and email fields for the full name
+      query.$or = [
+        { name: regex },
+        { email: regex },
+        { phone: regex }, // Add phone number search if needed
+      ];
+    }
+
+    if (userId.length > 0) {
+      if (userId === "no") {
+      } else {
+        query.userId = { $in: userId }; // Use $in operator to match any of the values in the array
+      }
+    }
+
+    const totalJobs = await jobModel.countDocuments();
+
+    const Job = await jobModel
+      .find(query)
+      .sort({ _id: -1 }) // Sort by _id in descending order
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    if (!Job) {
+      return res.status(200).send({
+        message: "NO Job found",
+        success: false,
+      });
+    }
+    return res.status(200).send({
+      message: "All Job list ",
+      JobCount: Job.length,
+      currentPage: page,
+      totalPages: Math.ceil(totalJobs / limit),
+      success: true,
+      Job,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: `Error while getting Skill ${error}`,
+      success: false,
+      error,
+    });
+  }
+};
+
+export const getAllJobDoctorFillAdmin = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1; // Current page, default is 1
+    const limit = parseInt(req.query.limit) || 10; // Number of documents per page, default is 10
+    const searchTerm = req.query.search || ""; // Get search term from the query parameters
+    const userId = req.query.userId || ""; // Get search term from the query parameters
+
+    const skip = (page - 1) * limit;
+
+    const query = {};
+    if (searchTerm) {
+      const regex = new RegExp(searchTerm, "i"); // Case-insensitive regex pattern for the search term
+
+      // Add regex pattern to search both username and email fields for the full name
+      query.$or = [
+        { name: regex },
+        { email: regex },
+        { phone: regex }, // Add phone number search if needed
+      ];
+    }
+
+    // Exclude jobs where userId is already in the applyId array
+    if (userId) {
+      // Assuming userId is a single value or string, use $nin to exclude jobs where applyId includes the userId
+      query.applyId = { $nin: [userId] };
+    }
+    query.status = { $in: 1 }; // Use $in operator to match any of the values in the array
+
+    const totalJobs = await jobModel.countDocuments();
+
+    const Job = await jobModel
+      .find(query)
+      .select("jobTitle statename city c_name startSalary endSalary") // Only select the fields you need
+      .sort({ _id: -1 }) // Sort by _id in descending order
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    if (!Job) {
+      return res.status(200).send({
+        message: "NO Job found",
+        success: false,
+      });
+    }
+    return res.status(200).send({
+      message: "All Job list ",
+      JobCount: Job.length,
+      currentPage: page,
+      totalPages: Math.ceil(totalJobs / limit),
+      success: true,
+      Job,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: `Error while getting Skill ${error}`,
+      success: false,
+      error,
+    });
+  }
+};
+
+export const getAllMyJobDoctorFillAdmin = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1; // Current page, default is 1
+    const limit = parseInt(req.query.limit) || 10; // Number of documents per page, default is 10
+    const searchTerm = req.query.search || ""; // Get search term from the query parameters
+    const userId = req.query.userId || ""; // Get search term from the query parameters
+
+    const skip = (page - 1) * limit;
+
+    const query = {};
+    if (searchTerm) {
+      const regex = new RegExp(searchTerm, "i"); // Case-insensitive regex pattern for the search term
+
+      // Add regex pattern to search both username and email fields for the full name
+      query.$or = [
+        { name: regex },
+        { email: regex },
+        { phone: regex }, // Add phone number search if needed
+      ];
+    }
+
+    // Exclude jobs where userId is already in the applyId array
+    if (userId) {
+      // Assuming userId is a single value or string, use $nin to exclude jobs where applyId includes the userId
+      query.applyId = { $in: [userId] };
+    }
+    query.status = { $in: 1 }; // Use $in operator to match any of the values in the array
+
+    const totalJobs = await jobModel.countDocuments();
+
+    const Job = await jobModel
+      .find(query)
+      .select("jobTitle statename city c_name startSalary endSalary") // Only select the fields you need
+      .sort({ _id: -1 }) // Sort by _id in descending order
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    if (!Job) {
+      return res.status(200).send({
+        message: "NO Job found",
+        success: false,
+      });
+    }
+    return res.status(200).send({
+      message: "All Job list ",
+      JobCount: Job.length,
+      currentPage: page,
+      totalPages: Math.ceil(totalJobs / limit),
+      success: true,
+      Job,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: `Error while getting Skill ${error}`,
+      success: false,
+      error,
+    });
+  }
+};
+
+export const editStatusJObAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { status } = req.body;
+
+    let updateFields = {
+      status: status,
+    };
+
+    const user = await jobModel.findByIdAndUpdate(id, updateFields, {
+      new: true,
+    });
+    if (!user) {
+      return res.status(200).send({
+        message: "NO job found",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: "job Updated!",
+      success: true,
+      user,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: `Error while updating job: ${error}`,
+      success: false,
+      error,
+    });
+  }
+};
+
+export const getJobByIDAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const Job = await jobModel.findById(id);
+    if (!Job) {
+      return res.status(200).send({
+        message: "Job Not Found By Id",
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      message: "fetch Single Job!",
+      success: true,
+      Job,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: `Error while get Job: ${error}`,
+      success: false,
+      error,
+    });
+  }
+};
+
+export const ApplyJobByIDAdmin = async (req, res) => {
+  try {
+    const { id, userId } = req.params;
+    const Job = await jobModel.findById(id);
+
+    if (!Job) {
+      return res.status(200).send({
+        message: "Job Not Found By Id",
+        success: false,
+      });
+    }
+
+    // Add userId to applyId array
+    if (!Job.applyId.includes(userId)) {
+      Job.applyId.push(userId);
+      await Job.save(); // Save the updated job
+    }
+
+    return res.status(200).json({
+      message: "User applied successfully!",
+      success: true,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: `Error while applying for job: ${error}`,
+      success: false,
       error,
     });
   }

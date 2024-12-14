@@ -28,6 +28,7 @@ import axios from "axios";
 import { cpSync } from "fs";
 import enquireModel from "../models/enquireModel.js";
 import multer from "multer";
+import jobModel from "../models/jobModel.js";
 
 dotenv.config();
 
@@ -5061,6 +5062,30 @@ export const cancelOrderUser = async (req, res) => {
   } catch (error) {
     return res.status(400).json({
       message: `Error while updating Rating: ${error}`,
+      success: false,
+      error,
+    });
+  }
+};
+
+export const getJobByIDAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const Job = await jobModel.findById(id);
+    if (!Job) {
+      return res.status(200).send({
+        message: "Job Not Found By Id",
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      message: "fetch Single Job!",
+      success: true,
+      Job,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: `Error while get Job: ${error}`,
       success: false,
       error,
     });
