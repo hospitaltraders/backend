@@ -466,7 +466,7 @@ export const UpdateAdminBlogController = async (req, res) => {
     existingBlog.metaDescription =
       metaDescription || existingBlog.metaDescription;
     existingBlog.metaKeywords = metaKeywords || existingBlog.metaKeywords;
-    existingBlog.slug = slugify(existingBlog.title, {
+    existingBlog.slug = slugify(title, {
       lower: true,
       strict: true,
     });

@@ -457,7 +457,7 @@ router.put("/update-user/:id", updateUserController);
 router.put("/update-profile/:id", updateProfileUser);
 
 router.post("/create-blog", createBlogController);
-router.put("/update-blog/:id", updateBlogController);
+router.put("/update-blog/:id", UpdateAdminBlogController);
 router.get("/get-blog/:id", getBlogIdController);
 router.get("/get-admin-blog/:id", getAdminBlogIdController);
 
