@@ -5,6 +5,7 @@ import {
   getAllGalleryController,
   deleteGalleryController,
   AddAdminBlogController,
+  UpdateAdminBlogController,
   AdmindeleteBlogController,
   AddAdminCategoryController,
   getAllReviewsAdmin,
@@ -120,6 +121,8 @@ import {
   getJobByIDAdmin,
   ApplyJobByIDAdmin,
   getAllMyJobDoctorFillAdmin,
+  getAllJobViewAdmin,
+  editStatusJObStatusAdmin,
 } from "../controller/adminController.js";
 import {
   AddCart,
@@ -212,7 +215,7 @@ router.delete("/admin/delete-gallery/:id", deleteGalleryController);
 router.post("/admin/addBlog", AddAdminBlogController);
 router.get("/admin/all-blogs", getAllBlogAdmin);
 
-router.post("/admin/update-blog/:id", AddAdminBlogController);
+router.post("/admin/update-blog/:id", UpdateAdminBlogController);
 router.delete("/admin/delete-blog/:id", AdmindeleteBlogController);
 
 router.post("/admin/add-category", AddAdminCategoryController);
@@ -540,8 +543,11 @@ router.post("/admin/add-job", AddAdminJobController);
 router.get("/admin/all-job-fillter", getAllJobFillAdmin);
 router.get("/admin/all-job-doctor-fillter", getAllJobDoctorFillAdmin);
 router.get("/admin/all-my-job-doctor-fillter", getAllMyJobDoctorFillAdmin);
+router.get("/admin/all-job-view", getAllJobViewAdmin);
 
 router.put("/admin/update-job/:id", editStatusJObAdmin);
+router.put("/admin/update-job-status/:id", editStatusJObStatusAdmin);
+
 router.get("/admin/get-job-id/:id", getJobByIDAdmin);
 router.get("/admin/apply-job-id/:id/:userId", ApplyJobByIDAdmin);
 

@@ -41,6 +41,7 @@ import departmentsModel from "../models/departmentsModel.js";
 import businessModel from "../models/businessModel.js";
 import skillModel from "../models/skillModel.js";
 import jobModel from "../models/jobModel.js";
+import jobStatusModel from "../models/jobStatusModel.js";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -422,6 +423,68 @@ export const AddAdminBlogController = async (req, res) => {
     return res.status(400).send({
       success: false,
       message: "Error WHile Creting blog",
+      error,
+    });
+  }
+};
+
+export const UpdateAdminBlogController = async (req, res) => {
+  try {
+    const { id } = req.params; // Assuming you are using the slug to identify the blog
+    const {
+      title,
+      description,
+      image,
+      metaTitle,
+      metaDescription,
+      metaKeywords,
+    } = req.body;
+
+    // Validation
+    if (!title) {
+      return res.status(400).send({
+        success: false,
+        message: "Please Provide All Fields",
+      });
+    }
+
+    // Find the blog by its slug (or _id)
+    const existingBlog = await blogModel.findById(id);
+
+    if (!existingBlog) {
+      return res.status(404).send({
+        success: false,
+        message: "Blog not found",
+      });
+    }
+
+    // Update the blog with new data
+    existingBlog.title = title || existingBlog.title;
+    existingBlog.description = description || existingBlog.description;
+    existingBlog.image = image || existingBlog.image;
+    existingBlog.metaTitle = metaTitle || existingBlog.metaTitle;
+    existingBlog.metaDescription =
+      metaDescription || existingBlog.metaDescription;
+    existingBlog.metaKeywords = metaKeywords || existingBlog.metaKeywords;
+
+    // If the title has changed, regenerate the slug
+    if (title && title !== existingBlog.title) {
+      existingBlog.slug = slugify(title, { lower: true, strict: true });
+    }
+
+    // Save the updated blog
+    await existingBlog.save();
+
+    return res.status(200).send({
+      success: true,
+      message: "Blog Updated Successfully!",
+      updatedBlog: existingBlog,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send({
+      success: false,
+      message: "Error While Updating blog",
       error,
     });
   }
@@ -5216,6 +5279,42 @@ export const editStatusJObAdmin = async (req, res) => {
     const user = await jobModel.findByIdAndUpdate(id, updateFields, {
       new: true,
     });
+
+    if (!user) {
+      return res.status(200).send({
+        message: "NO job found",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: "job Updated!",
+      success: true,
+      user,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: `Error while updating job: ${error}`,
+      success: false,
+      error,
+    });
+  }
+};
+
+export const editStatusJObStatusAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { status } = req.body;
+
+    let updateFields = {
+      status: status,
+    };
+
+    const user = await jobStatusModel.findByIdAndUpdate(id, updateFields, {
+      new: true,
+    });
+
     if (!user) {
       return res.status(200).send({
         message: "NO job found",
@@ -5264,28 +5363,102 @@ export const getJobByIDAdmin = async (req, res) => {
 export const ApplyJobByIDAdmin = async (req, res) => {
   try {
     const { id, userId } = req.params;
-    const Job = await jobModel.findById(id);
 
+    // Find the job by its ID
+    const Job = await jobModel.findById(id);
     if (!Job) {
-      return res.status(200).send({
+      return res.status(404).send({
         message: "Job Not Found By Id",
         success: false,
       });
     }
 
-    // Add userId to applyId array
-    if (!Job.applyId.includes(userId)) {
-      Job.applyId.push(userId);
-      await Job.save(); // Save the updated job
+    // Check if the user has already applied for this job
+    if (Job.applyId.includes(userId)) {
+      return res.status(400).json({
+        message: "User has already applied for this job.",
+        success: false,
+      });
     }
+
+    // Add userId to applyId array
+    Job.applyId.push(userId);
+    await Job.save(); // Save the updated job
+
+    // Create a new job status entry for the user applying to the job
+    const jobStatus = new jobStatusModel({
+      jobId: Job._id,
+      userId: userId,
+    });
+    await jobStatus.save(); // Save the new job status entry
 
     return res.status(200).json({
       message: "User applied successfully!",
       success: true,
     });
   } catch (error) {
-    return res.status(400).json({
-      message: `Error while applying for job: ${error}`,
+    // Catching any errors and responding with appropriate message
+    return res.status(500).json({
+      message: `Error while applying for job: ${error.message}`,
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+export const getAllJobViewAdmin = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1; // Current page, default is 1
+    const limit = parseInt(req.query.limit) || 10; // Number of documents per page, default is 10
+    const searchTerm = req.query.search || ""; // Get search term from the query parameters
+    const status = req.query.status || "";
+
+    const skip = (page - 1) * limit;
+
+    const query = {};
+    if (searchTerm) {
+      const regex = new RegExp(searchTerm, "i"); // Case-insensitive regex pattern for the search term
+
+      // Add regex pattern to search both username and email fields for the full name
+      query.$or = [
+        { name: regex },
+        { email: regex },
+        { phone: regex }, // Add phone number search if needed
+      ];
+    }
+
+    if (query.status > 0) {
+      query.status = { $in: status }; // Use $in operator to match any of the values in the array
+    }
+
+    const totalJobs = await jobStatusModel.countDocuments();
+
+    const Job = await jobStatusModel
+      .find(query)
+      .sort({ _id: -1 }) // Sort by _id in descending order
+      .skip(skip)
+      .limit(limit)
+      .populate("jobId")
+      .populate("userId")
+      .lean();
+
+    if (!Job) {
+      return res.status(400).send({
+        message: "NO Job found",
+        success: false,
+      });
+    }
+    return res.status(200).send({
+      message: "All Job list ",
+      JobCount: Job.length,
+      currentPage: page,
+      totalPages: Math.ceil(totalJobs / limit),
+      success: true,
+      Job,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: `Error while getting job ${error}`,
       success: false,
       error,
     });
