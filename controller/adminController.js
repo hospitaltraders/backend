@@ -469,7 +469,7 @@ export const UpdateAdminBlogController = async (req, res) => {
 
     // If the title has changed, regenerate the slug
     if (existingBlog.slug === "" || existingBlog.slug.length === 0) {
-      existingBlog.slug = slugify(title, { lower: true, strict: true });
+      existingBlog.slug = slugify(existingBlog.title, { lower: true, strict: true });
     }
 
     // Save the updated blog
