@@ -468,7 +468,7 @@ export const UpdateAdminBlogController = async (req, res) => {
     existingBlog.metaKeywords = metaKeywords || existingBlog.metaKeywords;
 
     // If the title has changed, regenerate the slug
-    if (existingBlog.slug.length === 0) {
+    if (existingBlog.slug === "" || existingBlog.slug.length === 0) {
       existingBlog.slug = slugify(title, { lower: true, strict: true });
     }
 
